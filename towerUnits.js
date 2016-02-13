@@ -78,6 +78,49 @@ Tower.prototype.fire = function() {
   }
 };
 
+Tower.prototype.getRangeString = function() {
+    switch (this.range) {
+        case TOWER_RANGE_SHORT:
+            return 'short';
+
+        case TOWER_RANGE_MEDIUM:
+            return 'med';
+
+        case TOWER_RANGE_LONG:
+            return 'long';
+
+        default:
+            return '??';
+    }
+};
+
+Tower.prototype.getDamageString = function() {
+    switch (this.hurt) {
+        case TOWER_DAMAGE_MEDIUM:
+            return 'med';
+
+        case TOWER_DAMAGE_HIGH:
+            return 'high';
+
+        default:
+            return '??';
+    }
+};
+
+
+Tower.prototype.getRateString = function() {
+    switch (this.rateOfFire) {
+        case TOWER_RATE_MEDIUM:
+            return 'med';
+
+        case TOWER_RATE_HIGH:
+            return 'high';
+
+        default:
+            return '??';
+    }
+};
+
 //other types of towers
 //long range tower:
 
@@ -110,3 +153,17 @@ Tower3.prototype.cost = Tower.prototype.cost * 1.5;
 //class of tower to add when mouse is clicked
 var towerClasses = [Tower,Tower2,Tower3];
 
+document.getElementById('tower1range').textContent = Tower.prototype.getRangeString();
+document.getElementById('tower1damage').textContent = Tower.prototype.getDamageString();
+document.getElementById('tower1rate').textContent = Tower.prototype.getRateString();
+document.getElementById('tower1cost').textContent = Tower.prototype.cost;
+
+document.getElementById('tower2range').textContent = Tower2.prototype.getRangeString();
+document.getElementById('tower2damage').textContent = Tower2.prototype.getDamageString();
+document.getElementById('tower2rate').textContent = Tower2.prototype.getRateString();
+document.getElementById('tower2cost').textContent = Tower2.prototype.cost;
+
+document.getElementById('tower3range').textContent = Tower3.prototype.getRangeString();
+document.getElementById('tower3damage').textContent = Tower3.prototype.getDamageString();
+document.getElementById('tower3rate').textContent = Tower3.prototype.getRateString();
+document.getElementById('tower3cost').textContent = Tower3.prototype.cost;
