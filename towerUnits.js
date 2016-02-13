@@ -22,6 +22,7 @@ Tower.prototype.rateOfFire = TOWER_RATE_MEDIUM;
 Tower.prototype.range = TOWER_RANGE_MEDIUM;
 Tower.prototype.hurt = TOWER_DAMAGE_MEDIUM;
 Tower.prototype.color = 'green';
+Tower.prototype.image = document.getElementById('tower1img');
 Tower.prototype.cost = 50;
 
 Tower.prototype.findTarget = function() {
@@ -49,24 +50,35 @@ Tower.prototype.findUnitVector = function() {
   var xDist = this.target.x-this.x;
   var yDist = this.target.y-this.y;
   var dist = Math.sqrt(xDist*xDist+yDist*yDist); 
+  this.angle = Math.atan2(yDist, xDist) + Math.PI/2;
   this.xFire = this.x+this.r*xDist/dist; //where turret ends and bullets start
   this.yFire = this.y+this.r*yDist/dist;
 };
 
 Tower.prototype.draw= function() {
-  //draw outter circle
-  context.beginPath();
-  context.fillStyle = this.color;
-  context.arc(this.x,this.y,this.r,0,2*Math.PI);
-  context.fill();
-  context.stroke();
-  //draw turret
-  context.beginPath();
-  context.moveTo(this.x,this.y);
-  context.lineTo(this.xFire,this.yFire);
-  context.lineWidth = 3;
-  context.stroke();
-  context.lineWidth = 1;
+  var img = this.constructor.prototype.image;
+  if (img) {
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate(this.angle);
+    context.drawImage(img, -img.width/2, -img.height/2);
+    context.restore();
+  } else {
+    //draw outer circle
+    context.beginPath();
+    context.fillStyle = this.color;
+    context.arc(this.x,this.y,this.r,0,2*Math.PI);
+    context.fill();
+    context.stroke();
+    //draw turret
+    context.beginPath();
+    context.moveTo(this.x,this.y);
+    context.lineTo(this.xFire,this.yFire);
+    context.lineWidth = 3;
+    context.stroke();
+    context.lineWidth = 1;
+  }
+
 };
 
 Tower.prototype.fire = function() {
@@ -132,6 +144,7 @@ Tower2.prototype.constructor = Tower2;
 
 Tower2.prototype.range = TOWER_RANGE_LONG;
 Tower2.prototype.color = 'brown';
+Tower2.prototype.image = document.getElementById('tower2img');
 Tower2.prototype.cost = Tower.prototype.cost * 1.5;
 Tower2.prototype.rateOfFire = TOWER_RATE_HIGH;
 
@@ -144,6 +157,7 @@ Tower3.prototype.constructor = Tower3;
 
 Tower3.prototype.range = TOWER_RANGE_SHORT;
 Tower3.prototype.hurt = TOWER_DAMAGE_HIGH;
+Tower3.prototype.image = document.getElementById('tower3img');
 Tower3.prototype.color = 'aqua';
 Tower3.prototype.cost = Tower.prototype.cost * 1.5;
 
