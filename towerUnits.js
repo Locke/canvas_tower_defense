@@ -3,14 +3,24 @@
 var towers=[];
 
 function Tower(x,y) {
-  this.x = x,
-  this.y = y
+  this.x = x;
+  this.y = y;
 }
 
+var TOWER_RANGE_MEDIUM = rectWidth*5;
+var TOWER_RANGE_LONG = TOWER_RANGE_MEDIUM * 1.4; //looking to double area, not radius or range
+var TOWER_RANGE_SHORT = TOWER_RANGE_MEDIUM * 0.7; //0.7 rather than 0.5 because looking at area
+
+var TOWER_RATE_MEDIUM = FPS; //smaller means more bullets per second
+var TOWER_RATE_HIGH = TOWER_RATE_MEDIUM / 2;
+
+var TOWER_DAMAGE_MEDIUM = Enemy.prototype.maxLife/6;
+var TOWER_DAMAGE_HIGH = TOWER_DAMAGE_MEDIUM * 1.5;
+
 Tower.prototype.r = rectWidth; //radius
-Tower.prototype.rateOfFire = FPS; //smaller means more bullets per second
-Tower.prototype.range = rectWidth*5;
-Tower.prototype.hurt = Enemy.prototype.maxLife/6;;
+Tower.prototype.rateOfFire = TOWER_RATE_MEDIUM;
+Tower.prototype.range = TOWER_RANGE_MEDIUM;
+Tower.prototype.hurt = TOWER_DAMAGE_MEDIUM;
 Tower.prototype.color = 'green';
 Tower.prototype.cost = 50;
 
@@ -65,7 +75,7 @@ Tower.prototype.fire = function() {
     bullets.push(new Bullet(this.xFire,this.yFire,this.target,this.hurt));
     //reset this objects rateOfFire to the prototypes
     this.rateOfFire = this.constructor.prototype.rateOfFire;
-  };
+  }
 };
 
 //other types of towers
@@ -73,24 +83,24 @@ Tower.prototype.fire = function() {
 
 var Tower2 = function(x,y) {
   Tower.call(this,x,y);
-}
+};
 Tower2.prototype = Object.create(Tower.prototype);
 Tower2.prototype.constructor = Tower2;
 
-Tower2.prototype.range = Tower.prototype.range*1.4;//looking to double area, not radius or range
+Tower2.prototype.range = TOWER_RANGE_LONG;
 Tower2.prototype.color = 'brown';
 Tower2.prototype.cost = Tower.prototype.cost * 1.5;
-Tower2.prototype.rateOfFire = Tower.prototype.rateOfFire / 2;
+Tower2.prototype.rateOfFire = TOWER_RATE_HIGH;
 
 //short range high damage tower
 var Tower3 = function(x,y) {
   Tower.call(this,x,y);
-}
+};
 Tower3.prototype = Object.create(Tower.prototype);
 Tower3.prototype.constructor = Tower3;
 
-Tower3.prototype.range = Tower.prototype.range * 0.7; //0.7 rather than 0.5 because looking at area
-Tower3.prototype.hurt = Tower.prototype.hurt*2;
+Tower3.prototype.range = TOWER_RANGE_SHORT;
+Tower3.prototype.hurt = TOWER_DAMAGE_HIGH;
 Tower3.prototype.color = 'aqua';
 Tower3.prototype.cost = Tower.prototype.cost * 1.5;
 
