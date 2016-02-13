@@ -3,14 +3,24 @@
 var towers=[];
 
 function Tower(x,y) {
-  this.x = x,
-  this.y = y
+  this.x = x;
+  this.y = y;
 }
 
+var TOWER_RANGE_MEDIUM = rectWidth*5;
+var TOWER_RANGE_LONG = TOWER_RANGE_MEDIUM * 1.4; //looking to double area, not radius or range
+var TOWER_RANGE_SHORT = TOWER_RANGE_MEDIUM * 0.7; //0.7 rather than 0.5 because looking at area
+
+var TOWER_RATE_MEDIUM = FPS; //smaller means more bullets per second
+var TOWER_RATE_HIGH = TOWER_RATE_MEDIUM / 2;
+
+var TOWER_DAMAGE_MEDIUM = Enemy.prototype.maxLife/6;
+var TOWER_DAMAGE_HIGH = TOWER_DAMAGE_MEDIUM * 1.5;
+
 Tower.prototype.r = rectWidth; //radius
-Tower.prototype.rateOfFire = FPS; //smaller means more bullets per second
-Tower.prototype.range = rectWidth*5;
-Tower.prototype.hurt = Enemy.prototype.maxLife/6;;
+Tower.prototype.rateOfFire = TOWER_RATE_MEDIUM;
+Tower.prototype.range = TOWER_RANGE_MEDIUM;
+Tower.prototype.hurt = TOWER_DAMAGE_MEDIUM;
 Tower.prototype.color = 'green';
 Tower.prototype.cost = 50;
 
@@ -65,7 +75,50 @@ Tower.prototype.fire = function() {
     bullets.push(new Bullet(this.xFire,this.yFire,this.target,this.hurt));
     //reset this objects rateOfFire to the prototypes
     this.rateOfFire = this.constructor.prototype.rateOfFire;
-  };
+  }
+};
+
+Tower.prototype.getRangeString = function() {
+    switch (this.range) {
+        case TOWER_RANGE_SHORT:
+            return 'short';
+
+        case TOWER_RANGE_MEDIUM:
+            return 'med';
+
+        case TOWER_RANGE_LONG:
+            return 'long';
+
+        default:
+            return '??';
+    }
+};
+
+Tower.prototype.getDamageString = function() {
+    switch (this.hurt) {
+        case TOWER_DAMAGE_MEDIUM:
+            return 'med';
+
+        case TOWER_DAMAGE_HIGH:
+            return 'high';
+
+        default:
+            return '??';
+    }
+};
+
+
+Tower.prototype.getRateString = function() {
+    switch (this.rateOfFire) {
+        case TOWER_RATE_MEDIUM:
+            return 'med';
+
+        case TOWER_RATE_HIGH:
+            return 'high';
+
+        default:
+            return '??';
+    }
 };
 
 //other types of towers
@@ -73,24 +126,24 @@ Tower.prototype.fire = function() {
 
 var Tower2 = function(x,y) {
   Tower.call(this,x,y);
-}
+};
 Tower2.prototype = Object.create(Tower.prototype);
 Tower2.prototype.constructor = Tower2;
 
-Tower2.prototype.range = Tower.prototype.range*1.4;//looking to double area, not radius or range
+Tower2.prototype.range = TOWER_RANGE_LONG;
 Tower2.prototype.color = 'brown';
 Tower2.prototype.cost = Tower.prototype.cost * 1.5;
-Tower2.prototype.rateOfFire = Tower.prototype.rateOfFire / 2;
+Tower2.prototype.rateOfFire = TOWER_RATE_HIGH;
 
 //short range high damage tower
 var Tower3 = function(x,y) {
   Tower.call(this,x,y);
-}
+};
 Tower3.prototype = Object.create(Tower.prototype);
 Tower3.prototype.constructor = Tower3;
 
-Tower3.prototype.range = Tower.prototype.range * 0.7; //0.7 rather than 0.5 because looking at area
-Tower3.prototype.hurt = Tower.prototype.hurt*2;
+Tower3.prototype.range = TOWER_RANGE_SHORT;
+Tower3.prototype.hurt = TOWER_DAMAGE_HIGH;
 Tower3.prototype.color = 'aqua';
 Tower3.prototype.cost = Tower.prototype.cost * 1.5;
 
@@ -100,3 +153,17 @@ Tower3.prototype.cost = Tower.prototype.cost * 1.5;
 //class of tower to add when mouse is clicked
 var towerClasses = [Tower,Tower2,Tower3];
 
+document.getElementById('tower1range').textContent = Tower.prototype.getRangeString();
+document.getElementById('tower1damage').textContent = Tower.prototype.getDamageString();
+document.getElementById('tower1rate').textContent = Tower.prototype.getRateString();
+document.getElementById('tower1cost').textContent = Tower.prototype.cost;
+
+document.getElementById('tower2range').textContent = Tower2.prototype.getRangeString();
+document.getElementById('tower2damage').textContent = Tower2.prototype.getDamageString();
+document.getElementById('tower2rate').textContent = Tower2.prototype.getRateString();
+document.getElementById('tower2cost').textContent = Tower2.prototype.cost;
+
+document.getElementById('tower3range').textContent = Tower3.prototype.getRangeString();
+document.getElementById('tower3damage').textContent = Tower3.prototype.getDamageString();
+document.getElementById('tower3rate').textContent = Tower3.prototype.getRateString();
+document.getElementById('tower3cost').textContent = Tower3.prototype.cost;
