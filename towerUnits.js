@@ -43,6 +43,8 @@ Tower.prototype.findTarget = function() {
       return; //only need a single target
     }
   }
+  // no target in range
+  this.target = null;
 };
 
 Tower.prototype.findUnitVector = function() {
