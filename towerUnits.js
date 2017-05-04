@@ -17,6 +17,11 @@ var TOWER_RATE_HIGH = TOWER_RATE_MEDIUM / 2;
 var TOWER_DAMAGE_MEDIUM = Enemy.prototype.maxLife/6;
 var TOWER_DAMAGE_HIGH = TOWER_DAMAGE_MEDIUM * 1.5;
 
+var TOWER_STRATEGY_OLDEST = 1;
+var TOWER_STRATEGY_YOUNGEST = 2;
+var TOWER_STRATEGY_WEAKEST = 3;
+var TOWER_STRATEGY_RANDOM = 4;
+
 Tower.prototype.r = rectWidth; //radius
 Tower.prototype.rateOfFire = TOWER_RATE_MEDIUM;
 Tower.prototype.range = TOWER_RANGE_MEDIUM;
@@ -24,10 +29,25 @@ Tower.prototype.hurt = TOWER_DAMAGE_MEDIUM;
 Tower.prototype.color = 'green';
 Tower.prototype.image = document.getElementById('tower1img');
 Tower.prototype.cost = 50;
+Tower.prototype.targetStrategy = TOWER_STRATEGY_OLDEST;
 
 Tower.prototype.enemyIsInRange = function(enemy) {
   var dist = (enemy.x-this.x)*(enemy.x-this.x+rectWidth)+(enemy.y-this.y)*(enemy.y-this.y+rectWidth); //rectWidth included to look at center of rectangle, not top left corner
   return (dist < (this.range*this.range)); //square of range. avoid Math.sqrt which is expensive
+};
+
+Tower.prototype.selectTarget = function(possibleTargets) {
+  switch (this.targetStrategy) {
+    case TOWER_STRATEGY_OLDEST:
+      return possibleTargets[0];
+    case TOWER_STRATEGY_YOUNGEST:
+      return possibleTargets[possibleTargets.length-1];
+    case TOWER_STRATEGY_WEAKEST:
+      return possibleTargets.sort(function(a,b){return a.life-b.life})[0];
+    case TOWER_STRATEGY_RANDOM:
+    default:
+      return possibleTargets[Math.floor(Math.random() * (possibleTargets.length))];
+  }
 };
 
 Tower.prototype.findTarget = function() {
@@ -36,19 +56,23 @@ Tower.prototype.findTarget = function() {
     this.target = null;
     return;
   }
-  //if target dead, remove target reference
-  if(this.target && this.target.life <= 0) {
+
+  //if target dead or out of range, remove target reference
+  if(this.target && (this.target.life <= 0 || !this.enemyIsInRange(this.target))) {
     this.target = null;
   }
-  //find first enemy withing range and select that as tower's target
-  for (var i = 0, j = enemies.length; i < j; i ++) {
-    if (this.enemyIsInRange(enemies[i])) {
-      this.target = enemies[i];
-      return; //only need a single target
-    }
+
+  //keep current target to track it
+  if(this.target) {
+    return;
   }
-  // no target in range
-  this.target = null;
+
+  //find all enemies in range
+  var possibleTargets = enemies.filter(this.enemyIsInRange, this);
+
+  if(possibleTargets.length > 0) {
+    this.target = this.selectTarget(possibleTargets);
+  }
 };
 
 Tower.prototype.findUnitVector = function() {
