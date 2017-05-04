@@ -29,7 +29,7 @@ Tower.prototype.hurt = TOWER_DAMAGE_MEDIUM;
 Tower.prototype.color = 'green';
 Tower.prototype.image = document.getElementById('tower1img');
 Tower.prototype.cost = 50;
-Tower.prototype.targetStrategy = TOWER_STRATEGY_OLDEST;
+Tower.prototype.targetStrategy = TOWER_STRATEGY_RANDOM;
 
 Tower.prototype.enemyIsInRange = function(enemy) {
   var dist = (enemy.x-this.x)*(enemy.x-this.x+rectWidth)+(enemy.y-this.y)*(enemy.y-this.y+rectWidth); //rectWidth included to look at center of rectangle, not top left corner
@@ -177,6 +177,7 @@ Tower2.prototype.color = 'brown';
 Tower2.prototype.image = document.getElementById('tower2img');
 Tower2.prototype.cost = Tower.prototype.cost * 1.5;
 Tower2.prototype.rateOfFire = TOWER_RATE_HIGH;
+Tower2.prototype.targetStrategy = TOWER_STRATEGY_WEAKEST;
 
 //short range high damage tower
 var Tower3 = function(x,y) {
@@ -190,6 +191,7 @@ Tower3.prototype.hurt = TOWER_DAMAGE_HIGH;
 Tower3.prototype.image = document.getElementById('tower3img');
 Tower3.prototype.color = 'aqua';
 Tower3.prototype.cost = Tower.prototype.cost * 1.5;
+Tower3.prototype.targetStrategy = TOWER_STRATEGY_YOUNGEST;
 
 
 //populate array of towers
