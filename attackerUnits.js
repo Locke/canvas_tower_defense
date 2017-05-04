@@ -1,9 +1,8 @@
 var enemies = [];
 var addedLife = 0; //incremented in checkForDead()
 
-function Enemy(x,y) {
-  this.x = x,
-  this.y = y,
+function Enemy(progress) {
+  this.progress = progress;
   this.life = this.maxLife + addedLife;
 }
 
@@ -21,20 +20,67 @@ Enemy.prototype.draw = function() {
   context.fillRect(this.x,this.y+rectWidth/3,rectWidth*this.life/(this.maxLife+addedLife),rectWidth/3);
 };
 
-Enemy.prototype.move = function(t) {
-  var move = this.speed*t;
-  if(this.x < rightBorder && this.y < firstBorder) this.x += move;
-  else if (this.x >= rightBorder && this.y < firstBorder) this.y += move;
-  else if (this.x >= leftBorder && this.y <= secondBorder) this.x -= move; 
-  else if (this.x <= leftBorder && this.y <= secondBorder) this.y += move;
-  else if (this.x <= rightBorder && this.y < thirdBorder) this.x += move;
-  else if (this.x >= rightBorder  && this.y <= thirdBorder) this.y += move;
-  else  {
-    this.x -= move;
-    //returns true so enemy can be removed if another function
-    if(this.x < 0) return true; 
+Enemy.prototype.progressTable = [
+  rightBorder,
+  firstBorder - rectWidth,
+  rightBorder - leftBorder,
+  secondBorder - firstBorder,
+  rightBorder - leftBorder,
+  thirdBorder - secondBorder,
+  rightBorder
+];
+
+Enemy.prototype.setPosition = function() {
+  var p = 0, i = 0;
+  for (var j = this.progressTable.length; i < j; i++ ) {
+    if (this.progress < this.progressTable[i] + p) {
+      break;
+    }
+    p += this.progressTable[i];
+  }
+
+  var p2 = this.progress - p;
+
+  switch(i) {
+    case 0:
+      this.x = p2;
+      this.y = 0 + rectWidth;
+      break;
+    case 1:
+      this.x = rightBorder;
+      this.y = p2 + rectWidth;
+      break;
+    case 2:
+      this.x = rightBorder - p2;
+      this.y = firstBorder;
+      break;
+    case 3:
+      this.x = leftBorder;
+      this.y = firstBorder + p2;
+      break;
+    case 4:
+      this.x = leftBorder + p2;
+      this.y = secondBorder;
+      break;
+    case 5:
+      this.x = rightBorder;
+      this.y = secondBorder + p2;
+      break;
+    case 6:
+      this.x = rightBorder - p2;
+      this.y = thirdBorder;
+      break;
+    case 7:
+    default:
+      //returns true so enemy can be removed in another function
+      return true;
   }
   return false;
+}
+
+Enemy.prototype.move = function(t) {
+  this.progress += this.speed*t;
+  return this.setPosition();
 };
  
 function checkForDead() {
@@ -56,16 +102,16 @@ var addEnemy = function() {
    if(stopped > 20) { 
      var pick = Math.floor(Math.random()*enemyTypes.length); 
      //select random enemy type
-     enemy = new enemyTypes[pick](0,rectWidth);
+     enemy = new enemyTypes[pick](0);
    } else {
-     enemy = new Enemy(0,rectWidth);
+     enemy = new Enemy(0);
    }
   enemies.push(enemy);
 }
 
 //faster enemy
-var FastEnemy = function(x,y) {
-  Enemy.call(this,x,y);
+var FastEnemy = function(progress) {
+  Enemy.call(this,progress);
 };
 FastEnemy.prototype = Object.create(Enemy.prototype);
 FastEnemy.prototype.constructor = FastEnemy;
@@ -74,8 +120,8 @@ FastEnemy.prototype.speed = Enemy.prototype.speed*1.4;
 FastEnemy.prototype.color = 'DarkRed';
 
 //stronger enemy
-var StrongEnemy = function(x,y) {
-  Enemy.call(this,x,y);
+var StrongEnemy = function(progress) {
+  Enemy.call(this,progress);
 };
 StrongEnemy.prototype = Object.create(Enemy.prototype);
 StrongEnemy.prototype.constructor = StrongEnemy;
