@@ -25,6 +25,11 @@ Tower.prototype.color = 'green';
 Tower.prototype.image = document.getElementById('tower1img');
 Tower.prototype.cost = 50;
 
+Tower.prototype.enemyIsInRange = function(enemy) {
+  var dist = (enemy.x-this.x)*(enemy.x-this.x+rectWidth)+(enemy.y-this.y)*(enemy.y-this.y+rectWidth); //rectWidth included to look at center of rectangle, not top left corner
+  return (dist < (this.range*this.range)); //square of range. avoid Math.sqrt which is expensive
+};
+
 Tower.prototype.findTarget = function() {
   //if no enemies, no target
   if(enemies.length === 0) {
@@ -37,8 +42,7 @@ Tower.prototype.findTarget = function() {
   }
   //find first enemy withing range and select that as tower's target
   for (var i = 0, j = enemies.length; i < j; i ++) {
-    var dist = (enemies[i].x-this.x)*(enemies[i].x-this.x+rectWidth)+(enemies[i].y-this.y)*(enemies[i].y-this.y+rectWidth); //rectWidth included to look at center of rectangle, not top left corner
-    if (dist < (this.range*this.range)) { //sqaure of range. avoice Math.sqrt which is expensive
+    if (this.enemyIsInRange(enemies[i])) {
       this.target = enemies[i];
       return; //only need a single target
     }
