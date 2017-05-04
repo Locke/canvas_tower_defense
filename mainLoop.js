@@ -2,8 +2,8 @@ var canvas = document.getElementById('canvas'),
 context = canvas.getContext('2d'),
 rectWidth = 20, //basic game unit size (pixles)
 maxWidth = canvas.width, //add maxHight if not perfect square
-FPS = 30,
-baseSpeed = 4*rectWidth/FPS,
+lastMove = new Date(),
+baseSpeed = 4*rectWidth/1000,
 mouse, //mouse x and y for drawing range
 currentTower = 0, //tower type selector.
 //borders for attacker's path
@@ -17,7 +17,7 @@ thirdBorder = maxWidth*3/4,
 attackerPoints = 0,
 stopped = 0,
 //counter for when to add enemy units
-addEnemyTimer = 60,
+addEnemyTimer = 2*1000,
 money = 250,
 moneyIncrement = 5;
 
@@ -26,7 +26,7 @@ moneyIncrement = 5;
 mainLoopRender = function() {
   context.beginPath();
   context.clearRect(0,0,canvas.width,canvas.height);
-  for(var i =0, j = enemies.length; i < j; i ++ ) {
+  for(var i = 0, j = enemies.length; i < j; i ++ ) {
     enemies[i].draw();
   }
   for(var i = 0, j = towers.length; i < j; i++ ) {
@@ -41,15 +41,16 @@ mainLoopRender = function() {
 
 //game logic (seperate from draw stuff)
 mainLoopLogic = function() {
+  var t = new Date() - lastMove;
   checkForDead();
-  addEnemyTimer--;
-  if(addEnemyTimer<1) {
+  addEnemyTimer -= t;
+  if(addEnemyTimer <= 0) {
     addEnemy()
-    addEnemyTimer = (stopped > 40) ? 20 : 30;  //how quicklly a new enemy is generated
+    addEnemyTimer = (stopped > 40) ? 0.66*1000 : 1.0*1000;  //how quicklly a new enemy is generated
   }
-  for(var i =0, j = enemies.length; i < j; i ++ ) {
+  for(var i = 0, j = enemies.length; i < j; i ++ ) {
     //true if attacker scored
-    if(enemies[i].move()){
+    if(enemies[i].move(t)) {
       attackerPoints++;
       //add point outside of canvas
       document.getElementById('attackersScore').innerHTML = attackerPoints;
@@ -62,22 +63,23 @@ mainLoopLogic = function() {
   for(var i = 0, j = towers.length; i < j; i++ ) {
     towers[i].findTarget();
     towers[i].findUnitVector();
-    towers[i].fire();
+    towers[i].fire(t);
   }
   //move bullets, check for hits, remove bullets if hit
   for(var i = 0, j = bullets.length; i < j; i++) {
-    bullets[i].move();
+    bullets[i].move(t);
     if(bullets[i].checkCollision()) {
      bullets.splice(i,1);
      j--;
      i--;
     }
   }
-  setTimeout(mainLoopLogic, 1000/FPS);
+  lastMove = new Date();
+  setTimeout(mainLoopLogic, 1000/30);
 };
  
 window.onload = function() {
-  setTimeout(mainLoopLogic, 1000/FPS);
+  setTimeout(mainLoopLogic, 1000/30);
   requestAnimationFrame(mainLoopRender);
 };
 

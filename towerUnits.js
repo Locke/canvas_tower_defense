@@ -11,7 +11,7 @@ var TOWER_RANGE_MEDIUM = rectWidth*5;
 var TOWER_RANGE_LONG = TOWER_RANGE_MEDIUM * 1.4; //looking to double area, not radius or range
 var TOWER_RANGE_SHORT = TOWER_RANGE_MEDIUM * 0.7; //0.7 rather than 0.5 because looking at area
 
-var TOWER_RATE_MEDIUM = FPS; //smaller means more bullets per second
+var TOWER_RATE_MEDIUM = 1.0*1000; //smaller means more bullets per second
 var TOWER_RATE_HIGH = TOWER_RATE_MEDIUM / 2;
 
 var TOWER_DAMAGE_MEDIUM = Enemy.prototype.maxLife/6;
@@ -111,9 +111,9 @@ Tower.prototype.draw= function() {
 
 };
 
-Tower.prototype.fire = function() {
-  this.rateOfFire--;
-  if(this.target && this.rateOfFire <=0) {
+Tower.prototype.fire = function(t) {
+  this.rateOfFire -= t;
+  if(this.target && this.rateOfFire <= 0) {
     bullets.push(new Bullet(this.xFire,this.yFire,this.target,this.hurt));
     //reset this objects rateOfFire to the prototypes
     this.rateOfFire = this.constructor.prototype.rateOfFire;

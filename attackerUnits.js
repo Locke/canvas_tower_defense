@@ -21,8 +21,8 @@ Enemy.prototype.draw = function() {
   context.fillRect(this.x,this.y+rectWidth/3,rectWidth*this.life/(this.maxLife+addedLife),rectWidth/3);
 };
 
-Enemy.prototype.move = function() {
-  var move = this.speed;
+Enemy.prototype.move = function(t) {
+  var move = this.speed*t;
   if(this.x < rightBorder && this.y < firstBorder) this.x += move;
   else if (this.x >= rightBorder && this.y < firstBorder) this.y += move;
   else if (this.x >= leftBorder && this.y <= secondBorder) this.x -= move; 
