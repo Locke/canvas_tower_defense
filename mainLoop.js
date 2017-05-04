@@ -75,11 +75,11 @@ mainLoopLogic = function() {
     }
   }
   lastMove = new Date();
-  setTimeout(mainLoopLogic, 1000/30);
+  requestIdleCallback(mainLoopLogic, { timeout: 250 });
 };
  
 window.onload = function() {
-  setTimeout(mainLoopLogic, 1000/30);
+  requestIdleCallback(mainLoopLogic, { timeout: 250 });
   requestAnimationFrame(mainLoopRender);
 };
 
