@@ -11,12 +11,21 @@ Bullet.prototype.r = rectWidth/4;
 Bullet.prototype.speed = baseSpeed*2;
 
 Bullet.prototype.move = function(t) {
+  var move = this.speed*t;
+
   //find unit vector
   var xDist = this.target.x+rectWidth/2-this.x; //"+rectWidth/2" because we want bullet to go for center of enemy no top left corner
   var yDist = this.target.y+rectWidth/2-this.y;
   var dist = Math.sqrt(xDist*xDist+yDist*yDist);
-  this.x = this.x+this.speed*t*xDist/dist;
-  this.y = this.y+this.speed*t*yDist/dist;
+
+  if(dist < move) {
+    this.x = this.target.x+rectWidth/2;
+    this.y = this.target.y+rectWidth/2;
+  }
+  else {
+    this.x = this.x+move*xDist/dist;
+    this.y = this.y+move*yDist/dist;
+  }
 };
 
 Bullet.prototype.draw = function() {
