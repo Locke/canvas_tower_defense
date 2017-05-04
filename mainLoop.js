@@ -52,7 +52,8 @@ mainLoopLogic = function() {
     if(enemies[i].move()){
       attackerPoints++;
       //add point outside of canvas
-      document.getElementById('attackersScore').innerHTML = attackerPoints; 
+      document.getElementById('attackersScore').innerHTML = attackerPoints;
+      enemies[i].life = 0;
       enemies.splice(i,1);
       i--;
       j--;
