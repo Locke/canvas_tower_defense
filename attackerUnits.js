@@ -87,9 +87,9 @@ function checkForDead() {
   for (var i = 0, j = enemies.length; i < j; i++ ) {
     if (enemies[i].life <=0) {
       addedLife = Math.floor(stopped/10) * (1 + Math.floor(stopped/100)); //used to make enemies tougher as the number of stopped enemies goes up
-      document.getElementById('stopped').innerHTML = ++stopped;
+      stopped++;
       money += moneyIncrement;
-      document.getElementById('money').innerHTML = money;
+      updateStats = true;
       enemies.splice(i,1);
       i--;
       j--; 

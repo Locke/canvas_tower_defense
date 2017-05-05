@@ -19,11 +19,19 @@ stopped = 0,
 //counter for when to add enemy units
 addEnemyTimer = 2*1000,
 money = 250,
-moneyIncrement = 5;
+moneyIncrement = 5,
+updateStats = false;
 
 
 //draw stuff
 mainLoopRender = function() {
+  if (updateStats) {
+    updateStats = false;
+    document.getElementById('attackersScore').innerHTML = attackerPoints;
+    document.getElementById('stopped').innerHTML = stopped;
+    document.getElementById('money').innerHTML = money;
+  }
+
   context.beginPath();
   context.clearRect(0,0,canvas.width,canvas.height);
   for(var i = 0, j = enemies.length; i < j; i ++ ) {
@@ -52,8 +60,7 @@ mainLoopLogic = function() {
     //true if attacker scored
     if(enemies[i].move(t)) {
       attackerPoints++;
-      //add point outside of canvas
-      document.getElementById('attackersScore').innerHTML = attackerPoints;
+      updateStats = true;
       enemies[i].life = 0;
       enemies.splice(i,1);
       i--;
